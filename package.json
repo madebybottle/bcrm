@@ -15,7 +15,12 @@
     "type": "git",
     "url": "https://github.com/madebybottle/bcrm.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "commander": "~1.1.1",
+    "win-fork": "~1.1.1",
+    "component-scss-prepare": "*",
+    "component": "~0.13.2"
+  },
   "devDependencies": {},
   "license": "MIT"
 }
