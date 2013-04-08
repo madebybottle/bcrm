@@ -1,0 +1,21 @@
+{
+  "name": "bcrm",
+  "preferGlobal": true,
+  "version": "0.0.1",
+  "author": "Austin Birch <austin@austinbirch.co.uk>",
+  "description": "Utility for building and creating BottleCRM modules",
+  "keywords": [
+    "BottleCRM",
+    "bcrm"
+  ],
+  "bin": {
+    "bcrm": "./bin/bcrm"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/madebybottle/bcrm.git"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "license": "MIT"
+}
