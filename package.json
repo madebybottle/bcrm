@@ -18,7 +18,7 @@
   "dependencies": {
     "commander": "~1.1.1",
     "win-fork": "~1.1.1",
-    "bcrm-scss-prepare": "~0.0.1",
+    "bcrm-scss-prepare": "git://github.com/madebybottle/bcrm-scss-prepare.git",
     "component": "~0.13.2"
   },
   "devDependencies": {},
