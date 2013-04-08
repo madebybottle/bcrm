@@ -47,7 +47,7 @@ switch(cmd) {
     args.push('--use');
     args.push(path.join(__dirname,
                         '/../node_modules/',
-                        'component-scss-prepare'));
+                        'bcrm-scss-prepare'));
 
     // remove the pre-compile file if it already exists
     var buildPath = path.join(process.cwd(), '/build');
