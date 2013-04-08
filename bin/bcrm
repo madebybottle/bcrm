@@ -1,0 +1,114 @@
+#!/usr/bin/env node
+
+// ### Dependencies
+var program = require('commander'),
+    spawn = require('win-fork'),
+    path = require('path'),
+    fs = require('fs');
+
+// usage
+
+program
+  .version(require('../package.json').version)
+  .usage('<command> [options]');
+
+// sub-command help
+
+program.on('--help', function() {
+  console.log(' Commands:');
+  console.log();
+  console.log('   build              builds the module');
+  process.exit();
+});
+
+// parse argv
+program.parse(process.argv);
+
+// args without command name
+var args = process.argv.slice(3);
+
+// command name
+var cmd = program.args[0];
+
+// display help if no command was passed
+if (!cmd) {
+  process.stdout.write(program.helpInformation());
+  process.emit('--help');
+  process.exit();
+}
+
+// We just proxy over to component mostly
+switch(cmd) {
+  case 'build':
+    // execute component build with our plugin
+    bin = path.join(__dirname,
+      '../node_modules/component/bin/component-build');
+
+    args.push('--use');
+    args.push(path.join(__dirname,
+                        '/../node_modules/',
+                        'component-scss-prepare'));
+
+    // remove the pre-compile file if it already exists
+    var buildPath = path.join(process.cwd(), '/build');
+    var preCompile = path.join(buildPath, '/pre-compile.scss');
+    if (fs.existsSync(preCompile)) {
+      fs.unlinkSync(preCompile);
+    }
+
+    var proc = spawn(bin, args, {stdio: 'inherit', customFds: [0, 1, 2]});
+
+    proc.on('close', function(code) {
+      // compile our SCSS
+      var sassBin = 'sass';
+      var inFile = path.join(buildPath, '/pre-compile.scss');
+      var outFile = path.join(buildPath, '/compiled.css');
+
+      // PREPEND BottleCRM LIBRARY
+      var before = fs.readFileSync(inFile).toString();
+      var libImport = '@import "' + 'library' + '";';
+      var after = libImport + '\n' +
+                  before;
+
+      fs.writeFileSync(inFile, after);
+
+      // COMPILE SASS
+      var output = [];
+
+      // set our build path
+      var sassArgs = [];
+      sassArgs.push('-I', buildPath);
+      sassArgs.push('-I', path.join(__dirname, '../styles/'));
+      sassArgs.push(inFile);
+
+      // Run `sass` in a child process.
+      var sass = spawn('sass', sassArgs);
+
+      sass.stdout.setEncoding('utf8');
+      sass.stdout.on('data', function (data) {
+        output.push(new Buffer(data));
+      });
+
+      sass.stderr.setEncoding('utf8');
+      sass.stderr.on('data', function (data) {
+        console.log(new Error(data));
+      });
+
+      // Read the generated css file on exit.
+      sass.on('exit', function (code) {
+        if (code !== 0) {
+          console.log(new Error('Error exiting: ' + code));
+          process.exit(code);
+        }
+        // no error, so write our file
+        return fs.writeFileSync(outFile, Buffer.concat(output).toString());
+      });
+    });
+    break;
+
+  default:
+    bin = path.join(__dirname,
+      '../node_modules/component/bin/component-' + cmd);
+    console.log(bin);
+    break;
+}
