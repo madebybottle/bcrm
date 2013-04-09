@@ -19,7 +19,8 @@
     "commander": "~1.1.1",
     "win-fork": "~1.1.1",
     "bcrm-scss-prepare": "git://github.com/madebybottle/bcrm-scss-prepare.git",
-    "component": "~0.13.2"
+    "component": "~0.13.2",
+    "component-string": "~0.1.1"
   },
   "devDependencies": {},
   "license": "MIT"
