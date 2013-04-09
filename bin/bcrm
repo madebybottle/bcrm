@@ -45,13 +45,17 @@ switch(cmd) {
       '../node_modules/component/bin/component-build');
 
     args.push('--use');
-    args.push(path.join(__dirname,
-                        '/../node_modules/',
-                        'bcrm-scss-prepare'));
-    args.push('--use');
-    args.push(path.join(__dirname,
+
+    var plugins = [];
+    plugins.push(path.join(__dirname,
                         '/../node_modules/',
                         'component-string'));
+
+    plugins.push(path.join(__dirname,
+                        '/../node_modules/',
+                        'bcrm-scss-prepare'));
+
+    args.push(plugins.join(','));
 
     // remove the pre-compile file if it already exists
     var buildPath = path.join(process.cwd(), '/build');
@@ -66,6 +70,12 @@ switch(cmd) {
       // compile our SCSS
       var sassBin = 'sass';
       var inFile = path.join(buildPath, '/pre-compile.scss');
+
+      if (!fs.existsSync(inFile)) {
+        console.log("No pre-compile.scss file");
+        process.exit(1);
+      }
+
       var outFile = path.join(buildPath, '/compiled.css');
 
       // PREPEND BottleCRM LIBRARY
